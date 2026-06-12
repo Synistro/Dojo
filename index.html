@@ -44,8 +44,6 @@ html, body {
   display: flex; flex-direction: column; align-items: center;
   gap: 20px; width: 100%; padding: 60px 0 40px; min-height: 100%;
 }
-
-/* iPhone SE (568–667px viewport height) — reduce vertical padding */
 @media (max-height: 667px) {
   .screen-content { padding: 36px 0 24px; gap: 14px; }
 }
@@ -55,9 +53,6 @@ html, body {
 .sub { font-family: var(--font-ui); font-size: 11px; color: var(--dim); text-align: center; line-height: 1.6; max-width: 280px; }
 .hint { font-family: var(--font-display); font-size: 12px; font-style: italic; color: var(--dim); text-align: center; }
 
-/* FIX 1: -webkit-backdrop-filter added for iOS Safari */
-/* FIX 2: solid color-mix fallback FIRST (Safari < 16.4 gets this),
-          then override with color-mix via @supports for modern browsers */
 .btn {
   position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center;
   border: none; outline: none; cursor: pointer; border-radius: 999px; padding: 14px 36px;
@@ -67,19 +62,10 @@ html, body {
   transition: box-shadow 300ms, transform 100ms; -webkit-appearance: none;
 }
 .btn:active { transform: scale(0.97); }
-
-/* Fallback for Safari < 16.4 — solid color, no color-mix */
-.btn.primary {
-  box-shadow: 0 0 18px 4px var(--state-color), 0 0 40px 8px var(--state-color);
-}
-/* Modern browsers that support color-mix */
+.btn.primary { box-shadow: 0 0 18px 4px var(--state-color), 0 0 40px 8px var(--state-color); }
 @supports (color: color-mix(in srgb, red 50%, blue)) {
-  .btn.primary {
-    box-shadow: 0 0 18px 4px color-mix(in srgb, var(--state-color) 60%, transparent),
-                0 0 40px 8px color-mix(in srgb, var(--state-color) 30%, transparent);
-  }
+  .btn.primary { box-shadow: 0 0 18px 4px color-mix(in srgb, var(--state-color) 60%, transparent), 0 0 40px 8px color-mix(in srgb, var(--state-color) 30%, transparent); }
 }
-
 .btn.secondary { box-shadow: 0 0 10px 2px rgba(255,255,255,0.08); }
 .btn-text { background: none; border: none; color: var(--dim); font-size: 12px; cursor: pointer; padding: 8px; font-family: var(--font-ui); -webkit-appearance: none; }
 
@@ -91,9 +77,41 @@ html, body {
 .pill .pill-name { font-family: var(--font-display); font-size: 14px; font-style: italic; }
 .pill .pill-val { font-family: var(--font-ui); font-size: 9px; letter-spacing: 0.1em; color: var(--dim); }
 
+/* MEMBER SWITCHER */
+.member-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 16px; background: rgba(6,7,11,0.85);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.member-avatar {
+  width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--state-color);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 13px; font-style: italic;
+  cursor: pointer; transition: border-color 300ms, box-shadow 300ms;
+  box-shadow: 0 0 8px 1px var(--state-color);
+}
+.member-list {
+  position: fixed; top: 50px; left: 0; right: 0; z-index: 101;
+  background: rgba(6,7,11,0.96); border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding: 12px 16px; display: none; flex-direction: column; gap: 8px;
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+}
+.member-list.open { display: flex; }
+.member-item {
+  display: flex; align-items: center; gap: 12px; padding: 8px 10px;
+  border-radius: 10px; cursor: pointer; transition: background 200ms;
+}
+.member-item:hover, .member-item.active { background: rgba(255,255,255,0.06); }
+.member-item-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-size: 14px; font-style: italic; border: 1.5px solid; }
+.member-item-info { display: flex; flex-direction: column; }
+.member-item-name { font-family: var(--font-display); font-size: 14px; font-style: italic; }
+.member-item-state { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-top: 1px; }
+.member-bar-label { font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dim); }
+
 /* DIAL */
 .dial-wrap { position: relative; width: 300px; height: 300px; flex-shrink: 0; touch-action: none; user-select: none; -webkit-user-select: none; }
-/* FIX 3 (SE): shrink dial on short screens */
 @media (max-height: 667px) {
   .dial-wrap { width: 240px; height: 240px; }
   .dial-canvas { width: 240px !important; height: 240px !important; }
@@ -164,6 +182,29 @@ html, body {
 .bar-track { flex: 1; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
 .bar-fill { height: 100%; border-radius: 2px; transition: width 600ms ease; }
 .bar-count { font-size: 9px; color: var(--dim); width: 20px; text-align: right; flex-shrink: 0; }
+
+/* CHECKIN HISTORY ROW */
+.history-row {
+  width: 100%; max-width: 320px; display: flex; align-items: center; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.history-time { font-size: 9px; color: var(--dim); letter-spacing: 0.08em; width: 38px; flex-shrink: 0; }
+.history-states { display: flex; align-items: center; gap: 6px; flex: 1; }
+.history-state-chip { font-family: var(--font-display); font-style: italic; font-size: 12px; padding: 2px 8px; border-radius: 999px; border: 1px solid; }
+.history-arrow { font-size: 9px; color: var(--dim); }
+.history-activity { font-size: 9px; color: var(--dim); text-align: right; max-width: 80px; line-height: 1.3; }
+
+/* DB indicator badge */
+.db-badge {
+  position: fixed; bottom: 16px; right: 16px; z-index: 200;
+  display: flex; align-items: center; gap: 6px;
+  background: rgba(6,7,11,0.9); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px; padding: 5px 10px;
+  font-size: 8px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim);
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  cursor: pointer;
+}
+.db-dot { width: 5px; height: 5px; border-radius: 50%; background: #467a16; box-shadow: 0 0 4px #467a16; }
 </style>
 </head>
 <body>
@@ -177,7 +218,18 @@ html, body {
 </svg>
 
 <div class="ambient" id="ambient"></div>
-<div id="app">
+
+<!-- MEMBER BAR -->
+<div class="member-bar" id="member-bar">
+  <div class="member-avatar" id="active-avatar" onclick="toggleMemberList()">E</div>
+  <div class="member-bar-label" id="active-member-label">Eric M. · ALR Alumni</div>
+  <div style="font-size:9px;color:var(--dim);letter-spacing:0.08em">DEMO</div>
+</div>
+
+<!-- MEMBER LIST DROPDOWN -->
+<div class="member-list" id="member-list"></div>
+
+<div id="app" style="padding-top:50px">
 
   <!-- HOME -->
   <div class="screen active" id="s-home">
@@ -190,13 +242,18 @@ html, body {
         <div>
           <div class="label-small">LIVE EVENT</div>
           <div style="font-family:var(--font-display);font-style:italic;font-size:16px;margin:2px 0">Morning Coherence</div>
-          <div style="font-size:10px;color:var(--dim)">14 members checking in right now</div>
+          <div style="font-size:10px;color:var(--dim)" id="live-count">14 members checking in right now</div>
         </div>
       </div>
       <button class="home-option" onclick="startFlow()">
         <div class="opt-tag">Individual Practice</div>
         <div class="opt-title">Check in with yourself</div>
         <div class="opt-desc">State → Intention → Action. Takes 3 minutes.</div>
+      </button>
+      <button class="home-option" onclick="showScreen('s-history')">
+        <div class="opt-tag">Your Flow</div>
+        <div class="opt-title">Where you've been</div>
+        <div class="opt-desc" id="history-desc">Loading your check-ins...</div>
       </button>
       <button class="home-option" onclick="showScreen('s-community')">
         <div class="opt-tag">Community</div>
@@ -329,6 +386,19 @@ html, body {
         <button class="btn secondary" onclick="showScreen('s-flow');renderFlowChart()">See Today</button>
         <button class="btn primary" onclick="startFlow()">New Check-in</button>
       </div>
+      <button class="btn-text" onclick="showScreen('s-home');refreshHome()">← Home</button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="screen" id="s-history">
+    <div class="screen-content">
+      <div class="label-small">YOUR FLOW</div>
+      <div class="heading" style="font-size:20px" id="history-title">—</div>
+      <div class="flow-chart-wrap">
+        <svg id="history-svg" viewBox="0 0 340 160" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div id="history-list" style="width:100%;max-width:320px"></div>
       <button class="btn-text" onclick="showScreen('s-home')">← Home</button>
     </div>
   </div>
@@ -339,10 +409,10 @@ html, body {
       <div class="label-small">COMMUNITY</div>
       <div class="heading" style="font-size:22px">ALR Alumni</div>
       <div class="sub">Where the community is today.</div>
-      <div class="community-stats">
-        <div class="stat-block"><div class="stat-val">34</div><div class="stat-label">Members</div></div>
-        <div class="stat-block"><div class="stat-val">21</div><div class="stat-label">Checked in</div></div>
-        <div class="stat-block"><div class="stat-val">62%</div><div class="stat-label">Active</div></div>
+      <div class="community-stats" id="community-stats">
+        <div class="stat-block"><div class="stat-val" id="stat-members">—</div><div class="stat-label">Members</div></div>
+        <div class="stat-block"><div class="stat-val" id="stat-checkins">—</div><div class="stat-label">Checked in</div></div>
+        <div class="stat-block"><div class="stat-val" id="stat-active">—</div><div class="stat-label">Active</div></div>
       </div>
       <div style="position:relative;width:260px;height:260px;flex-shrink:0">
         <canvas id="canvas-community" width="260" height="260"></canvas>
@@ -351,9 +421,9 @@ html, body {
         </div>
       </div>
       <div class="community-bar-list" id="community-bars"></div>
-      <div style="display:flex;gap:8px;align-items:center">
+      <div style="display:flex;gap:8px;align-items:center" id="courage-line">
         <div style="width:6px;height:6px;border-radius:50%;background:#467a16;box-shadow:0 0 6px #467a16"></div>
-        <div class="hint">62% above the courage threshold</div>
+        <div class="hint" id="courage-pct">— above the courage threshold</div>
       </div>
       <button class="btn-text" onclick="showScreen('s-home')">← Home</button>
     </div>
@@ -364,7 +434,7 @@ html, body {
     <div class="screen-content" style="justify-content:center;min-height:100vh">
       <div class="live-dot" style="width:12px;height:12px"></div>
       <div class="label-small">LIVE — MORNING COHERENCE</div>
-      <div class="heading" style="font-size:22px">14 members<br>checking in right now</div>
+      <div class="heading" style="font-size:22px" id="group-join-count">14 members<br>checking in right now</div>
       <div class="sub">Add your state to the collective picture. Takes 90 seconds.</div>
       <button class="btn primary" onclick="startGroupFlow()">Join Check-in</button>
       <button class="btn-text" onclick="showScreen('s-home')">← Back</button>
@@ -376,7 +446,7 @@ html, body {
     <div class="screen-content">
       <div class="live-dot" style="width:10px;height:10px"></div>
       <div class="label-small">MORNING COHERENCE — LIVE</div>
-      <div class="heading" style="font-size:18px">15 members checked in<br>updating live</div>
+      <div class="heading" style="font-size:18px" id="group-agg-count">— members checked in</div>
       <div style="position:relative;width:260px;height:260px;flex-shrink:0">
         <canvas id="canvas-group" width="260" height="260"></canvas>
         <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
@@ -385,14 +455,26 @@ html, body {
       </div>
       <div class="community-bar-list" id="group-bars"></div>
       <div class="hint">Refreshing every 5 seconds</div>
-      <button class="btn secondary" onclick="showScreen('s-home')">Done</button>
+      <button class="btn secondary" onclick="showScreen('s-home');refreshHome()">Done</button>
     </div>
   </div>
 
 </div>
 
+<!-- DB BADGE -->
+<div class="db-badge" onclick="toggleDbInfo()" title="Mock Supabase data layer">
+  <div class="db-dot"></div>
+  <span id="db-label">mock db</span>
+</div>
+
 <script>
 'use strict';
+
+// ═══════════════════════════════════════════════════════════
+// MOCK DATA LAYER
+// Mirrors Supabase schema exactly. Swap these functions for
+// real supabase-js calls in Phase 2 — zero UI logic changes.
+// ═══════════════════════════════════════════════════════════
 
 const STATES = [
   { name:'Shame',         value:20,  color:'#1f5562', paradigm:'survival' },
@@ -416,339 +498,439 @@ const STATES = [
 ];
 
 const PARADIGM_HINTS = {
-  survival:  'Contracted. The self is defending itself.',
-  reason:    'Expanding. The self is finding ground.',
-  spiritual: 'Released. The self is held by something larger.',
+  survival: 'Contracted. The self is defending itself.',
+  reason:   'Expanding. The self is finding ground.',
+  spiritual:'Released. The self is held by something larger.',
 };
 
 const ACTIVITIES = [
-  { id:'breath_4_7_8',  title:'4-7-8 Breathwork',      duration:'4 min',   durationSecs:240,  body:'Inhale 4, hold 7, exhale 8. Three rounds.',           targets:['Courage','Neutrality','Willingness','Acceptance'], leaves:['Fear','Anger'] },
-  { id:'cold_splash',   title:'Cold Water Splash',      duration:'1 min',   durationSecs:60,   body:'Cold water on the face. Reset the vagus nerve.',      targets:['Courage','Neutrality','Willingness'],             leaves:['Apathy','Grief','Fear'] },
-  { id:'walk_5',        title:'Five-minute Walk',       duration:'5 min',   durationSecs:300,  body:'Outside if possible. No phone, no music.',            targets:['Neutrality','Willingness','Acceptance'],           leaves:['Apathy','Anger','Hubris'] },
-  { id:'box_breath',    title:'Box Breathing',          duration:'3 min',   durationSecs:180,  body:'Inhale 4, hold 4, exhale 4, hold 4. Repeat.',         targets:['Neutrality','Reason'],                            leaves:['Fear','Anger'] },
-  { id:'gratitude_3',   title:'Three Gratitudes',       duration:'2 min',   durationSecs:120,  body:'Three specific things, why each matters today.',      targets:['Acceptance','Love','Joy'],                        leaves:['Grief','Hubris','Desire'] },
-  { id:'metta',         title:'Loving-kindness',        duration:'6 min',   durationSecs:360,  body:'May I be well. May you be well. May all be well.',    targets:['Love','Joy','Peace'],                             leaves:['Anger','Blame','Hubris'] },
-  { id:'shake_off',     title:'Shake It Off',           duration:'2 min',   durationSecs:120,  body:'Stand. Shake hands, arms, torso, legs. Loud exhale.', targets:['Willingness','Acceptance','Joy'],                 leaves:['Apathy','Grief','Fear'] },
-  { id:'hard_convo',    title:'The Hard Conversation',  duration:'~15 min', durationSecs:900,  body:'The one you have been avoiding. Speak it kindly.',    targets:['Acceptance','Reason','Peace'],                    leaves:['Blame','Anger','Hubris'] },
-  { id:'journal_blame', title:'Own The Blame',          duration:'5 min',   durationSecs:300,  body:'Write the story. Find your part. Soften.',            targets:['Acceptance','Reason'],                            leaves:['Blame','Anger'] },
-  { id:'yoga_flow',     title:'Slow Yoga Flow',         duration:'10 min',  durationSecs:600,  body:'Sun salutation, twice. Breath leads movement.',       targets:['Acceptance','Love','Joy','Peace'],                leaves:['Anger','Grief','Hubris','Apathy'] },
-  { id:'sit_silent',    title:'Silent Sit',             duration:'10 min',  durationSecs:600,  body:'Eyes closed. Notice without naming.',                 targets:['Peace','Enlightenment'],                         leaves:['Desire','Hubris','Anger'] },
-  { id:'reach_out',     title:'Reach Out to Someone',   duration:'5 min',   durationSecs:300,  body:'A short message. Ask, do not perform.',               targets:['Love','Acceptance','Joy'],                       leaves:['Grief','Apathy','Shame'] },
+  { id:'breath_4_7_8',  title:'4-7-8 Breathwork',     duration:'4 min',   durationSecs:240,  body:'Inhale 4, hold 7, exhale 8. Three rounds.',           targets:['Courage','Neutrality','Willingness','Acceptance'], leaves:['Fear','Anger'] },
+  { id:'cold_splash',   title:'Cold Water Splash',     duration:'1 min',   durationSecs:60,   body:'Cold water on the face. Reset the vagus nerve.',      targets:['Courage','Neutrality','Willingness'],             leaves:['Apathy','Grief','Fear'] },
+  { id:'walk_5',        title:'Five-minute Walk',      duration:'5 min',   durationSecs:300,  body:'Outside if possible. No phone, no music.',            targets:['Neutrality','Willingness','Acceptance'],           leaves:['Apathy','Anger','Hubris'] },
+  { id:'box_breath',    title:'Box Breathing',         duration:'3 min',   durationSecs:180,  body:'Inhale 4, hold 4, exhale 4, hold 4. Repeat.',         targets:['Neutrality','Reason'],                            leaves:['Fear','Anger'] },
+  { id:'gratitude_3',   title:'Three Gratitudes',      duration:'2 min',   durationSecs:120,  body:'Three specific things, why each matters today.',      targets:['Acceptance','Love','Joy'],                        leaves:['Grief','Hubris','Desire'] },
+  { id:'metta',         title:'Loving-kindness',       duration:'6 min',   durationSecs:360,  body:'May I be well. May you be well. May all be well.',    targets:['Love','Joy','Peace'],                             leaves:['Anger','Blame','Hubris'] },
+  { id:'shake_off',     title:'Shake It Off',          duration:'2 min',   durationSecs:120,  body:'Stand. Shake hands, arms, torso, legs. Loud exhale.', targets:['Willingness','Acceptance','Joy'],                 leaves:['Apathy','Grief','Fear'] },
+  { id:'hard_convo',    title:'The Hard Conversation', duration:'~15 min', durationSecs:900,  body:'The one you have been avoiding. Speak it kindly.',    targets:['Acceptance','Reason','Peace'],                    leaves:['Blame','Anger','Hubris'] },
+  { id:'journal_blame', title:'Own The Blame',         duration:'5 min',   durationSecs:300,  body:'Write the story. Find your part. Soften.',            targets:['Acceptance','Reason'],                            leaves:['Blame','Anger'] },
+  { id:'yoga_flow',     title:'Slow Yoga Flow',        duration:'10 min',  durationSecs:600,  body:'Sun salutation, twice. Breath leads movement.',       targets:['Acceptance','Love','Joy','Peace'],                leaves:['Anger','Grief','Hubris','Apathy'] },
+  { id:'sit_silent',    title:'Silent Sit',            duration:'10 min',  durationSecs:600,  body:'Eyes closed. Notice without naming.',                 targets:['Peace','Enlightenment'],                         leaves:['Desire','Hubris','Anger'] },
+  { id:'reach_out',     title:'Reach Out to Someone',  duration:'5 min',   durationSecs:300,  body:'A short message. Ask, do not perform.',               targets:['Love','Acceptance','Joy'],                       leaves:['Grief','Apathy','Shame'] },
 ];
 
-const app = {
-  currentState: 9, intentionState: 9, postState: 9,
-  checkins: [], selectedActivity: null,
-  timerInterval: null, timerRemaining: 0, isGroupFlow: false,
+// ─── MOCK DATABASE ───────────────────────────────────────
+// Supabase schema: communities, members, checkins, group_events
+// Same shape as production tables. localStorage for persistence.
+
+const MOCK_DB = {
+  communities: [
+    { id:'comm-001', name:'ALR Alumni', type:'alr_alumni', created_at:'2026-06-01T00:00:00Z' }
+  ],
+
+  members: [
+    { id:'mem-001', community_id:'comm-001', display_name:'Eric M.',     initials:'E', consent_admin_visibility:true,  consent_aggregate:true,  seed_checkins:[{stateIdx:14,hoursAgo:48},{stateIdx:11,hoursAgo:24},{stateIdx:15,hoursAgo:6}] },
+    { id:'mem-002', community_id:'comm-001', display_name:'Sara K.',     initials:'S', consent_admin_visibility:true,  consent_aggregate:true,  seed_checkins:[{stateIdx:5,hoursAgo:50},{stateIdx:8,hoursAgo:26},{stateIdx:9,hoursAgo:4}] },
+    { id:'mem-003', community_id:'comm-001', display_name:'James R.',    initials:'J', consent_admin_visibility:true,  consent_aggregate:true,  seed_checkins:[{stateIdx:3,hoursAgo:52},{stateIdx:6,hoursAgo:28},{stateIdx:10,hoursAgo:8}] },
+    { id:'mem-004', community_id:'comm-001', display_name:'Alicia T.',   initials:'A', consent_admin_visibility:false, consent_aggregate:true,  seed_checkins:[{stateIdx:15,hoursAgo:49},{stateIdx:16,hoursAgo:25},{stateIdx:17,hoursAgo:3}] },
+    { id:'mem-005', community_id:'comm-001', display_name:'Marco D.',    initials:'M', consent_admin_visibility:true,  consent_aggregate:true,  seed_checkins:[{stateIdx:7,hoursAgo:51},{stateIdx:9,hoursAgo:27},{stateIdx:11,hoursAgo:5}] },
+    { id:'mem-006', community_id:'comm-001', display_name:'Priya N.',    initials:'P', consent_admin_visibility:true,  consent_aggregate:true,  seed_checkins:[{stateIdx:12,hoursAgo:47},{stateIdx:13,hoursAgo:23},{stateIdx:14,hoursAgo:7}] },
+    { id:'mem-007', community_id:'comm-001', display_name:'David L.',    initials:'D', consent_admin_visibility:true,  consent_aggregate:false, seed_checkins:[{stateIdx:4,hoursAgo:53},{stateIdx:6,hoursAgo:29},{stateIdx:9,hoursAgo:9}] },
+    { id:'mem-008', community_id:'comm-001', display_name:'Nadia B.',    initials:'N', consent_admin_visibility:true,  consent_aggregate:true,  seed_checkins:[{stateIdx:10,hoursAgo:46},{stateIdx:11,hoursAgo:22},{stateIdx:12,hoursAgo:2}] },
+  ],
+
+  group_events: [
+    { id:'evt-001', community_id:'comm-001', title:'Morning Coherence', scheduled_at: new Date(Date.now()-1800000).toISOString(), duration_min:60 }
+  ]
 };
 
-const dialState = {};
+// ─── localStorage persistence ────────────────────────────
+// Key: 'dojo_checkins_[member_id]' → JSON array of checkin rows
+// Same shape as checkins table in Supabase
 
-// ── SCREEN ──────────────────────────────────────────
-// KEY FIX: initDial called via rAF AFTER screen is visible so getBoundingClientRect() works
+function _lsKey(memberId) { return 'dojo_checkins_' + memberId; }
+
+function db_getCheckins(memberId) {
+  try {
+    var stored = localStorage.getItem(_lsKey(memberId));
+    var persisted = stored ? JSON.parse(stored) : [];
+    // Merge seed checkins with persisted ones
+    var member = MOCK_DB.members.find(function(m){ return m.id === memberId; });
+    if (!member) return persisted;
+    var seed = member.seed_checkins.map(function(s, i) {
+      return {
+        id: 'seed-'+memberId+'-'+i,
+        member_id: memberId,
+        state_before: STATES[s.stateIdx].value,
+        state_after: null,
+        intention: null,
+        activity_id: null,
+        created_at: new Date(Date.now() - s.hoursAgo * 3600000).toISOString(),
+        _stateIdx: s.stateIdx
+      };
+    });
+    return seed.concat(persisted);
+  } catch(e) { return []; }
+}
+
+function db_saveCheckin(memberId, checkin) {
+  // checkin shape: { state_before, state_after, intention, activity_id, created_at }
+  try {
+    var stored = localStorage.getItem(_lsKey(memberId));
+    var arr = stored ? JSON.parse(stored) : [];
+    var row = Object.assign({}, checkin, {
+      id: 'ci-' + Date.now(),
+      member_id: memberId
+    });
+    arr.push(row);
+    localStorage.setItem(_lsKey(memberId), JSON.stringify(arr));
+    return row;
+  } catch(e) { return null; }
+}
+
+function db_getCommunityAggregate(communityId) {
+  // Returns array of { stateIdx, count } for all consenting members
+  var members = MOCK_DB.members.filter(function(m){
+    return m.community_id === communityId && m.consent_aggregate;
+  });
+  var counts = {};
+  members.forEach(function(m) {
+    var checkins = db_getCheckins(m.id);
+    if (!checkins.length) return;
+    // Latest checkin state
+    var last = checkins[checkins.length - 1];
+    var val = last.state_after || last.state_before;
+    var idx = STATES.findIndex(function(s){ return s.value === val; });
+    if (idx === -1 && last._stateIdx !== undefined) idx = last._stateIdx;
+    if (idx >= 0) counts[idx] = (counts[idx] || 0) + 1;
+  });
+  return Object.keys(counts).map(function(k){
+    return { stateIdx: parseInt(k), count: counts[k] };
+  });
+}
+
+function db_getMemberLastState(memberId) {
+  var checkins = db_getCheckins(memberId);
+  if (!checkins.length) return null;
+  var last = checkins[checkins.length - 1];
+  var val = last.state_after || last.state_before;
+  var idx = STATES.findIndex(function(s){ return s.value === val; });
+  if (idx === -1 && last._stateIdx !== undefined) return last._stateIdx;
+  return idx >= 0 ? idx : null;
+}
+
+function db_clearCheckins(memberId) {
+  try { localStorage.removeItem(_lsKey(memberId)); } catch(e) {}
+}
+
+// ─── ACTIVE MEMBER ───────────────────────────────────────
+var activeMemberId = 'mem-001';
+function getActiveMember() {
+  return MOCK_DB.members.find(function(m){ return m.id === activeMemberId; });
+}
+
+// ─── APP STATE ───────────────────────────────────────────
+var app = {
+  currentState: 9, intentionState: 9, postState: 9,
+  selectedActivity: null,
+  timerInterval: null, timerRemaining: 0, isGroupFlow: false,
+};
+var dialState = {};
+
+// ═══════════════════════════════════════════════════════════
+// UI LAYER
+// ═══════════════════════════════════════════════════════════
+
+// ─── MEMBER BAR ──────────────────────────────────────────
+function buildMemberList() {
+  var list = document.getElementById('member-list');
+  list.innerHTML = '';
+  MOCK_DB.members.forEach(function(m) {
+    var lastIdx = db_getMemberLastState(m.id);
+    var color = lastIdx !== null ? STATES[lastIdx].color : 'rgba(255,255,255,0.3)';
+    var stateName = lastIdx !== null ? STATES[lastIdx].name : 'No check-in';
+    var item = document.createElement('div');
+    item.className = 'member-item' + (m.id === activeMemberId ? ' active' : '');
+    item.innerHTML =
+      '<div class="member-item-avatar" style="color:'+color+';border-color:'+color+'">'+m.initials+'</div>' +
+      '<div class="member-item-info">' +
+        '<div class="member-item-name">'+m.display_name+'</div>' +
+        '<div class="member-item-state" style="color:'+color+'">'+stateName+'</div>' +
+      '</div>' +
+      (m.id === activeMemberId ? '<div style="font-size:9px;color:var(--dim);margin-left:auto">you</div>' : '');
+    item.onclick = function() { switchMember(m.id); };
+    list.appendChild(item);
+  });
+}
+
+function updateMemberBar() {
+  var m = getActiveMember();
+  var lastIdx = db_getMemberLastState(m.id);
+  var color = lastIdx !== null ? STATES[lastIdx].color : STATES[9].color;
+  var el = document.getElementById('active-avatar');
+  if (el) { el.textContent = m.initials; el.style.borderColor = color; el.style.boxShadow = '0 0 8px 1px ' + color; }
+  var lbl = document.getElementById('active-member-label');
+  if (lbl) lbl.textContent = m.display_name + ' · ALR Alumni';
+  if (lastIdx !== null) {
+    app.currentState = lastIdx;
+    updateAmbient(STATES[lastIdx].color);
+  }
+}
+
+function toggleMemberList() {
+  var list = document.getElementById('member-list');
+  list.classList.toggle('open');
+  if (list.classList.contains('open')) buildMemberList();
+}
+
+function switchMember(id) {
+  activeMemberId = id;
+  dialState = {}; // reset dial states for new member
+  app.currentState = 9; app.intentionState = 9; app.postState = 9;
+  document.getElementById('member-list').classList.remove('open');
+  updateMemberBar();
+  showScreen('s-home');
+  refreshHome();
+}
+
+// ─── SCREEN ──────────────────────────────────────────────
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
   var el = document.getElementById(id);
   if (el) el.classList.add('active');
-  if (id === 's-state')          requestAnimationFrame(function() { initDial('state'); });
-  if (id === 's-intention')      requestAnimationFrame(function() { initDial('intent'); });
-  if (id === 's-postcheck')      requestAnimationFrame(function() { setupPostCheck(); initDial('post'); });
-  if (id === 's-community')      requestAnimationFrame(function() { renderCommunityWheel(); });
-  if (id === 's-group-aggregate') requestAnimationFrame(function() { renderGroupAggregate(); });
+  if (id === 's-state')           requestAnimationFrame(function(){ initDial('state'); });
+  if (id === 's-intention')       requestAnimationFrame(function(){ initDial('intent'); });
+  if (id === 's-postcheck')       requestAnimationFrame(function(){ setupPostCheck(); initDial('post'); });
+  if (id === 's-community')       requestAnimationFrame(function(){ renderCommunity(); });
+  if (id === 's-group-aggregate') requestAnimationFrame(function(){ renderGroupAggregate(); });
+  if (id === 's-history')         requestAnimationFrame(function(){ renderHistory(); });
 }
 
-function startFlow() {
-  app.isGroupFlow = false;
-  updateAmbient(STATES[app.currentState].color);
-  showScreen('s-state');
+function refreshHome() {
+  var checkins = db_getCheckins(activeMemberId);
+  var desc = document.getElementById('history-desc');
+  if (desc) {
+    desc.textContent = checkins.length + ' check-in' + (checkins.length !== 1 ? 's' : '') + ' — tap to see your flow.';
+  }
+  var liveCount = db_getCommunityAggregate('comm-001').reduce(function(s,d){ return s+d.count; }, 0);
+  var lc = document.getElementById('live-count');
+  if (lc) lc.textContent = liveCount + ' member' + (liveCount !== 1 ? 's' : '') + ' checking in right now';
+  var gj = document.getElementById('group-join-count');
+  if (gj) gj.innerHTML = liveCount + ' members<br>checking in right now';
 }
 
-function startGroupFlow() {
-  app.isGroupFlow = true;
-  updateAmbient(STATES[app.currentState].color);
-  showScreen('s-state');
-}
-
+function startFlow() { app.isGroupFlow = false; updateAmbient(STATES[app.currentState].color); showScreen('s-state'); }
+function startGroupFlow() { app.isGroupFlow = true; updateAmbient(STATES[app.currentState].color); showScreen('s-state'); }
 function goToIntention() {
   app.intentionState = app.currentState;
   dialState['intent'] = { idx: app.currentState, angle: indexToAngle(app.currentState), velocity: 0 };
   showScreen('s-intention');
 }
+function goToPostCheck() { showScreen('s-postcheck'); }
 
-function goToPostCheck() {
-  showScreen('s-postcheck');
-}
-
-// ── AMBIENT ──────────────────────────────────────────
+// ─── AMBIENT ─────────────────────────────────────────────
 function updateAmbient(color) {
   document.documentElement.style.setProperty('--state-color', color);
   document.getElementById('ambient').style.background =
-    'radial-gradient(ellipse 60% 50% at 50% 60%, ' + color + '28 0%, transparent 70%)';
+    'radial-gradient(ellipse 60% 50% at 50% 60%, '+color+'28 0%, transparent 70%)';
 }
 
-// ── DIAL ─────────────────────────────────────────────
-function indexToAngle(idx) { return idx * (2 * Math.PI / STATES.length); }
-
-function getDialSize() {
-  // SE fix: match CSS media query — use smaller canvas on short screens
-  return window.innerHeight <= 667 ? 240 : 300;
-}
+// ─── DIAL ────────────────────────────────────────────────
+function indexToAngle(idx) { return idx * (2*Math.PI/STATES.length); }
+function getDialSize() { return window.innerHeight <= 667 ? 240 : 300; }
 
 function initDial(which) {
-  var canvas = document.getElementById('canvas-' + which);
-  if (!canvas) return;
-  var wrap = canvas.closest('.dial-wrap');
-  if (!wrap) return;
-
-  // Sync canvas intrinsic size with CSS size (SE fix)
-  var sz = getDialSize();
-  canvas.width = sz; canvas.height = sz;
-
-  // Init state if needed
+  var canvas = document.getElementById('canvas-'+which); if (!canvas) return;
+  var wrap = canvas.closest('.dial-wrap'); if (!wrap) return;
+  var sz = getDialSize(); canvas.width = sz; canvas.height = sz;
   if (!dialState[which]) {
-    var defaultIdx = which === 'intent' ? app.intentionState : app.currentState;
-    dialState[which] = { idx: defaultIdx, angle: indexToAngle(defaultIdx), velocity: 0 };
+    var defIdx = which === 'intent' ? app.intentionState : app.currentState;
+    dialState[which] = { idx: defIdx, angle: indexToAngle(defIdx), velocity: 0 };
   }
-
-  // Draw immediately — screen is now visible so canvas has real dimensions
-  drawDial(which);
-  updateDialUI(which);
-
-  // Detach old listeners by replacing wrap
-  var fresh = wrap.cloneNode(true);
-  wrap.parentNode.replaceChild(fresh, wrap);
-
-  var dragging = false, lastA = 0, lastT = 0, rafId = null;
-
-  function center() {
-    var r = fresh.getBoundingClientRect();
-    return { cx: r.left + r.width / 2, cy: r.top + r.height / 2 };
+  drawDial(which); updateDialUI(which);
+  var fresh = wrap.cloneNode(true); wrap.parentNode.replaceChild(fresh, wrap);
+  var dragging=false, lastA=0, lastT=0, rafId=null;
+  function center(){ var r=fresh.getBoundingClientRect(); return {cx:r.left+r.width/2,cy:r.top+r.height/2}; }
+  function ptA(x,y){ var c=center(); return Math.atan2(y-c.cy,x-c.cx); }
+  function normDelta(d){ return d>Math.PI?d-2*Math.PI:d<-Math.PI?d+2*Math.PI:d; }
+  function onMove(dx){
+    dialState[which].angle+=dx;
+    var n=STATES.length,sa=2*Math.PI/n,idx=(((Math.round(dialState[which].angle/sa))%n)+n)%n,prev=dialState[which].idx;
+    dialState[which].idx=idx; drawDial(which);
+    if(idx!==prev){updateDialUI(which);if(navigator.vibrate)navigator.vibrate(4);}
   }
-  function ptA(x, y) { var c = center(); return Math.atan2(y - c.cy, x - c.cx); }
-  function normDelta(d) { return d > Math.PI ? d - 2*Math.PI : d < -Math.PI ? d + 2*Math.PI : d; }
-
-  function onMove(dx) {
-    dialState[which].angle += dx;
-    var n = STATES.length, sa = 2*Math.PI/n;
-    var raw = dialState[which].angle / sa;
-    var idx = (((Math.round(raw)) % n) + n) % n;
-    var prev = dialState[which].idx;
-    dialState[which].idx = idx;
-    drawDial(which);
-    if (idx !== prev) { updateDialUI(which); if (navigator.vibrate) navigator.vibrate(4); }
-  }
-
-  function momentum() {
-    dialState[which].velocity *= 0.92;
-    if (Math.abs(dialState[which].velocity) < 0.001) { snapToNearest(which); return; }
-    onMove(dialState[which].velocity);
-    rafId = requestAnimationFrame(momentum);
-  }
-
-  fresh.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    if (rafId) cancelAnimationFrame(rafId);
-    dragging = true; dialState[which].velocity = 0;
-    lastA = ptA(e.touches[0].clientX, e.touches[0].clientY); lastT = Date.now();
-  }, { passive: false });
-
-  fresh.addEventListener('touchmove', function(e) {
-    if (!dragging) return; e.preventDefault();
-    var a = ptA(e.touches[0].clientX, e.touches[0].clientY);
-    var d = normDelta(a - lastA);
-    var now = Date.now();
-    dialState[which].velocity = d / Math.max(1, now - lastT) * 16;
-    lastA = a; lastT = now;
-    onMove(d);
-  }, { passive: false });
-
-  fresh.addEventListener('touchend', function() {
-    dragging = false;
-    rafId = requestAnimationFrame(momentum);
-  });
-
-  fresh.addEventListener('mousedown', function(e) {
-    if (rafId) cancelAnimationFrame(rafId);
-    dragging = true; dialState[which].velocity = 0;
-    lastA = ptA(e.clientX, e.clientY); lastT = Date.now();
-  });
-
-  window.addEventListener('mousemove', function(e) {
-    if (!dragging) return;
-    var a = ptA(e.clientX, e.clientY);
-    var d = normDelta(a - lastA);
-    var now = Date.now();
-    dialState[which].velocity = d / Math.max(1, now - lastT) * 16;
-    lastA = a; lastT = now;
-    onMove(d);
-  });
-
-  window.addEventListener('mouseup', function() {
-    if (!dragging) return;
-    dragging = false;
-    rafId = requestAnimationFrame(momentum);
-  });
+  function momentum(){ dialState[which].velocity*=0.92; if(Math.abs(dialState[which].velocity)<0.001){snapToNearest(which);return;} onMove(dialState[which].velocity); rafId=requestAnimationFrame(momentum); }
+  fresh.addEventListener('touchstart',function(e){e.preventDefault();if(rafId)cancelAnimationFrame(rafId);dragging=true;dialState[which].velocity=0;lastA=ptA(e.touches[0].clientX,e.touches[0].clientY);lastT=Date.now();},{passive:false});
+  fresh.addEventListener('touchmove',function(e){if(!dragging)return;e.preventDefault();var a=ptA(e.touches[0].clientX,e.touches[0].clientY),d=normDelta(a-lastA),now=Date.now();dialState[which].velocity=d/Math.max(1,now-lastT)*16;lastA=a;lastT=now;onMove(d);},{passive:false});
+  fresh.addEventListener('touchend',function(){dragging=false;rafId=requestAnimationFrame(momentum);});
+  fresh.addEventListener('mousedown',function(e){if(rafId)cancelAnimationFrame(rafId);dragging=true;dialState[which].velocity=0;lastA=ptA(e.clientX,e.clientY);lastT=Date.now();});
+  window.addEventListener('mousemove',function(e){if(!dragging)return;var a=ptA(e.clientX,e.clientY),d=normDelta(a-lastA),now=Date.now();dialState[which].velocity=d/Math.max(1,now-lastT)*16;lastA=a;lastT=now;onMove(d);});
+  window.addEventListener('mouseup',function(){if(!dragging)return;dragging=false;rafId=requestAnimationFrame(momentum);});
 }
 
 function snapToNearest(which) {
-  var n = STATES.length, sa = 2*Math.PI/n;
-  var idx = (((Math.round(dialState[which].angle / sa)) % n) + n) % n;
-  dialState[which].idx = idx;
-  dialState[which].angle = idx * sa;
-  drawDial(which);
-  updateDialUI(which);
+  var n=STATES.length,sa=2*Math.PI/n,idx=(((Math.round(dialState[which].angle/sa))%n)+n)%n;
+  dialState[which].idx=idx; dialState[which].angle=idx*sa; drawDial(which); updateDialUI(which);
 }
 
 function drawDial(which) {
-  var canvas = document.getElementById('canvas-' + which);
-  if (!canvas) return;
-  var ctx = canvas.getContext('2d');
-  var W = canvas.width, H = canvas.height, cx = W/2, cy = H/2;
-  // Scale ring radii proportionally to canvas size (300 → base)
-  var scale = W / 300;
-  var R = 130 * scale, ri = 73 * scale, n = STATES.length;
-  var sa = 2*Math.PI/n, start = -Math.PI/2;
-  var rot = dialState[which].angle - Math.round(dialState[which].angle/sa)*sa;
-
-  ctx.clearRect(0, 0, W, H);
-
-  for (var i = 0; i < n; i++) {
-    var li = (((Math.round(dialState[which].angle/sa) + i) % n) + n) % n;
-    var a0 = start + i*sa + rot - sa/2;
-    var a1 = a0 + sa - 0.01;
-    ctx.beginPath();
-    ctx.moveTo(cx + ri*Math.cos(a0), cy + ri*Math.sin(a0));
-    ctx.arc(cx, cy, R, a0, a1);
-    ctx.arc(cx, cy, ri, a1, a0, true);
-    ctx.closePath();
-    ctx.fillStyle = STATES[li].color;
-    ctx.fill();
+  var canvas=document.getElementById('canvas-'+which); if(!canvas)return;
+  var ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,cx=W/2,cy=H/2;
+  var scale=W/300,R=130*scale,ri=73*scale,n=STATES.length,sa=2*Math.PI/n,start=-Math.PI/2;
+  var rot=dialState[which].angle-Math.round(dialState[which].angle/sa)*sa;
+  ctx.clearRect(0,0,W,H);
+  for(var i=0;i<n;i++){
+    var li=(((Math.round(dialState[which].angle/sa)+i)%n)+n)%n;
+    var a0=start+i*sa+rot-sa/2,a1=a0+sa-0.01;
+    ctx.beginPath(); ctx.moveTo(cx+ri*Math.cos(a0),cy+ri*Math.sin(a0));
+    ctx.arc(cx,cy,R,a0,a1); ctx.arc(cx,cy,ri,a1,a0,true); ctx.closePath();
+    ctx.fillStyle=STATES[li].color; ctx.fill();
   }
-
-  if (which === 'intent') {
-    var cv = (((app.currentState - Math.round(dialState[which].angle/sa)) % n) + n) % n;
-    var ga = start + cv*sa + rot;
-    var gR = (R+ri)/2;
-    ctx.beginPath();
-    ctx.arc(cx + gR*Math.cos(ga), cy + gR*Math.sin(ga), 5 * scale, 0, 2*Math.PI);
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    ctx.fill();
-    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-    ctx.lineWidth = 1.5; ctx.stroke();
+  if(which==='intent'){
+    var cv=(((app.currentState-Math.round(dialState[which].angle/sa))%n)+n)%n;
+    var ga=start+cv*sa+rot,gR=(R+ri)/2;
+    ctx.beginPath(); ctx.arc(cx+gR*Math.cos(ga),cy+gR*Math.sin(ga),5*scale,0,2*Math.PI);
+    ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=1.5; ctx.stroke();
   }
-
-  ctx.beginPath(); ctx.arc(cx, cy, R+1, 0, 2*Math.PI);
-  ctx.strokeStyle = 'rgba(0,0,0,0.8)'; ctx.lineWidth = 2; ctx.stroke();
-  ctx.beginPath(); ctx.arc(cx, cy, ri-1, 0, 2*Math.PI);
-  ctx.strokeStyle = 'rgba(0,0,0,0.8)'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,R+1,0,2*Math.PI); ctx.strokeStyle='rgba(0,0,0,0.8)'; ctx.lineWidth=2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,ri-1,0,2*Math.PI); ctx.strokeStyle='rgba(0,0,0,0.8)'; ctx.lineWidth=2; ctx.stroke();
 }
 
 function updateDialUI(which) {
-  var idx = dialState[which] ? dialState[which].idx : 9;
-  var s = STATES[idx];
-  if (which === 'state') {
-    app.currentState = idx;
-    setText('state-name-display', s.name); setStyle('state-name-display', 'color', s.color);
-    setText('state-val-display', s.value);
-    setText('paradigm-label', s.paradigm); setStyle('paradigm-label', 'color', s.color);
-    setText('paradigm-hint', PARADIGM_HINTS[s.paradigm]);
-    setPointer('pointer-state', s.color); updateAmbient(s.color);
+  var idx=dialState[which]?dialState[which].idx:9,s=STATES[idx];
+  if(which==='state'){
+    app.currentState=idx;
+    setText('state-name-display',s.name);setStyle('state-name-display','color',s.color);
+    setText('state-val-display',s.value);
+    setText('paradigm-label',s.paradigm);setStyle('paradigm-label','color',s.color);
+    setText('paradigm-hint',PARADIGM_HINTS[s.paradigm]);
+    setPointer('pointer-state',s.color);updateAmbient(s.color);
   }
-  if (which === 'intent') {
-    app.intentionState = idx;
-    setText('intent-name-display', s.name); setStyle('intent-name-display', 'color', s.color);
-    setText('intent-val-display', s.value);
-    setPointer('pointer-intent', s.color); updateAmbient(s.color);
+  if(which==='intent'){
+    app.intentionState=idx;
+    setText('intent-name-display',s.name);setStyle('intent-name-display','color',s.color);
+    setText('intent-val-display',s.value);
+    setPointer('pointer-intent',s.color);updateAmbient(s.color);
     updateIntentionLabels();
   }
-  if (which === 'post') {
-    app.postState = idx;
-    setText('post-name-display', s.name); setStyle('post-name-display', 'color', s.color);
-    setText('post-val-display', s.value);
-    setPointer('pointer-post', s.color); updateAmbient(s.color);
+  if(which==='post'){
+    app.postState=idx;
+    setText('post-name-display',s.name);setStyle('post-name-display','color',s.color);
+    setText('post-val-display',s.value);
+    setPointer('pointer-post',s.color);updateAmbient(s.color);
     updatePostDelta();
   }
 }
 
-function setText(id, v) { var e = document.getElementById(id); if (e) e.textContent = v; }
-function setStyle(id, p, v) { var e = document.getElementById(id); if (e) e.style[p] = v; }
-function setPointer(id, color) {
-  var e = document.getElementById(id); if (!e) return;
-  e.style.borderBottomColor = color;
-  e.style.filter = 'drop-shadow(0 0 4px ' + color + ')';
-}
+function setText(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+function setStyle(id,p,v){var e=document.getElementById(id);if(e)e.style[p]=v;}
+function setPointer(id,color){var e=document.getElementById(id);if(!e)return;e.style.borderBottomColor=color;e.style.filter='drop-shadow(0 0 4px '+color+')';}
 
-// ── LOG STATE ────────────────────────────────────────
+// ─── LOG STATE ───────────────────────────────────────────
 function logState() {
-  app.checkins.push({ stateIdx: app.currentState, ts: Date.now() });
   renderFlowChart();
   showScreen('s-flow');
 }
 
-// ── FLOW CHART ───────────────────────────────────────
-function renderFlowChart() {
-  var svg = document.getElementById('flow-svg');
-  if (!svg) return;
-  var W=340, H=160, pad={l:8,r:24,t:20,b:28};
-  var iW=W-pad.l-pad.r, iH=H-pad.t-pad.b;
-  var logMin=Math.log(20), logMax=Math.log(700);
-  var seed=[
-    {stateIdx:3, ts:Date.now()-8*3600000},
-    {stateIdx:6, ts:Date.now()-5*3600000},
-    {stateIdx:8, ts:Date.now()-3*3600000},
-  ];
-  var pts = seed.concat(app.checkins);
-  if (!pts.length) pts.push({stateIdx:app.currentState, ts:Date.now()});
-
-  function toY(v) { return pad.t + iH - ((Math.log(v)-logMin)/(logMax-logMin))*iH; }
-  function toX(t) { var t0=pts[0].ts, t1=Math.max(pts[pts.length-1].ts+1, t0+1); return pad.l+((t-t0)/(t1-t0))*iW; }
-
-  var coords = pts.map(function(p) { return {x:toX(p.ts), y:toY(STATES[p.stateIdx].value), color:STATES[p.stateIdx].color}; });
-
-  var defs = '<defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%">';
-  pts.forEach(function(p,i) { defs += '<stop offset="'+Math.round(100*i/Math.max(pts.length-1,1))+'%" stop-color="'+STATES[p.stateIdx].color+'"/>'; });
-  defs += '</linearGradient><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></linearGradient></defs>';
-
-  var yC=toY(200), yL=toY(500);
-  var lines='<line x1="'+pad.l+'" y1="'+yC+'" x2="'+(W-pad.r)+'" y2="'+yC+'" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,4"/><text x="'+(W-pad.r+2)+'" y="'+(yC+4)+'" font-size="7" fill="rgba(255,255,255,0.25)" font-family="system-ui">200</text>';
-  lines += '<line x1="'+pad.l+'" y1="'+yL+'" x2="'+(W-pad.r)+'" y2="'+yL+'" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,4"/><text x="'+(W-pad.r+2)+'" y="'+(yL+4)+'" font-size="7" fill="rgba(255,255,255,0.25)" font-family="system-ui">500</text>';
-
-  var d='M'+coords[0].x+','+coords[0].y;
-  for (var i=1;i<coords.length;i++) { var mx=(coords[i-1].x+coords[i].x)/2; d+=' C'+mx+','+coords[i-1].y+' '+mx+','+coords[i].y+' '+coords[i].x+','+coords[i].y; }
-
-  var last=coords[coords.length-1];
-  var area=d+' L'+last.x+','+(H-pad.b)+' L'+coords[0].x+','+(H-pad.b)+' Z';
-  var dots=''; coords.forEach(function(c) { dots+='<circle cx="'+c.x+'" cy="'+c.y+'" r="4" fill="'+c.color+'" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>'; });
-  dots+='<circle cx="'+last.x+'" cy="'+last.y+'" r="8" fill="'+last.color+'" opacity="0.15"><animate attributeName="r" values="5;12;5" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.25;0;0.25" dur="2s" repeatCount="indefinite"/></circle>';
-  var tlabels=''; ['6AM','NOON','6PM'].forEach(function(l,i) { tlabels+='<text x="'+(pad.l+iW*i/2)+'" y="'+(H-4)+'" font-size="8" fill="rgba(255,255,255,0.2)" font-family="system-ui" text-anchor="middle">'+l+'</text>'; });
-
-  svg.innerHTML = defs+lines+'<path d="'+area+'" fill="url(#ag)"/><path d="'+d+'" fill="none" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round"/>'+dots+tlabels;
-
-  var s=STATES[app.currentState];
-  document.getElementById('flow-subtitle').innerHTML = pts.length+' check-in'+(pts.length!==1?'s':'')+' · last is <span style="color:'+s.color+';text-shadow:0 0 10px '+s.color+'80">'+s.name+'</span>';
+// ─── FLOW CHART ──────────────────────────────────────────
+function _buildFlowPoints() {
+  var checkins = db_getCheckins(activeMemberId);
+  return checkins.map(function(c){
+    var val = c.state_after || c.state_before;
+    var idx = STATES.findIndex(function(s){ return s.value === val; });
+    if (idx === -1 && c._stateIdx !== undefined) idx = c._stateIdx;
+    return { stateIdx: Math.max(0, idx), ts: new Date(c.created_at).getTime() };
+  }).concat([{ stateIdx: app.currentState, ts: Date.now() }]);
 }
 
-// ── INTENTION ────────────────────────────────────────
+function _renderFlowSvg(svgId, pts) {
+  var svg=document.getElementById(svgId); if(!svg)return;
+  var W=340,H=160,pad={l:8,r:24,t:20,b:28},iW=W-pad.l-pad.r,iH=H-pad.t-pad.b;
+  var logMin=Math.log(20),logMax=Math.log(700);
+  if(!pts.length) pts=[{stateIdx:app.currentState,ts:Date.now()}];
+  function toY(v){return pad.t+iH-((Math.log(v)-logMin)/(logMax-logMin))*iH;}
+  function toX(t){var t0=pts[0].ts,t1=Math.max(pts[pts.length-1].ts+1,t0+1);return pad.l+((t-t0)/(t1-t0))*iW;}
+  var coords=pts.map(function(p){return{x:toX(p.ts),y:toY(STATES[p.stateIdx].value),color:STATES[p.stateIdx].color};});
+  var defs='<defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%">';
+  pts.forEach(function(p,i){defs+='<stop offset="'+Math.round(100*i/Math.max(pts.length-1,1))+'%" stop-color="'+STATES[p.stateIdx].color+'"/>';});
+  defs+='</linearGradient><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(255,255,255,0.1)"/><stop offset="100%" stop-color="rgba(255,255,255,0)"/></linearGradient></defs>';
+  var yC=toY(200),yL=toY(500);
+  var lines='<line x1="'+pad.l+'" y1="'+yC+'" x2="'+(W-pad.r)+'" y2="'+yC+'" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,4"/><text x="'+(W-pad.r+2)+'" y="'+(yC+4)+'" font-size="7" fill="rgba(255,255,255,0.25)" font-family="system-ui">200</text>';
+  lines+='<line x1="'+pad.l+'" y1="'+yL+'" x2="'+(W-pad.r)+'" y2="'+yL+'" stroke="rgba(255,255,255,0.12)" stroke-width="1" stroke-dasharray="4,4"/><text x="'+(W-pad.r+2)+'" y="'+(yL+4)+'" font-size="7" fill="rgba(255,255,255,0.25)" font-family="system-ui">500</text>';
+  var d='M'+coords[0].x+','+coords[0].y;
+  for(var i=1;i<coords.length;i++){var mx=(coords[i-1].x+coords[i].x)/2;d+=' C'+mx+','+coords[i-1].y+' '+mx+','+coords[i].y+' '+coords[i].x+','+coords[i].y;}
+  var last=coords[coords.length-1];
+  var area=d+' L'+last.x+','+(H-pad.b)+' L'+coords[0].x+','+(H-pad.b)+' Z';
+  var dots='';coords.forEach(function(c){dots+='<circle cx="'+c.x+'" cy="'+c.y+'" r="4" fill="'+c.color+'" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>';});
+  dots+='<circle cx="'+last.x+'" cy="'+last.y+'" r="8" fill="'+last.color+'" opacity="0.15"><animate attributeName="r" values="5;12;5" dur="2s" repeatCount="indefinite"/><animate attributeName="opacity" values="0.25;0;0.25" dur="2s" repeatCount="indefinite"/></circle>';
+  var tlabels='';['6AM','NOON','6PM'].forEach(function(l,i){tlabels+='<text x="'+(pad.l+iW*i/2)+'" y="'+(H-4)+'" font-size="8" fill="rgba(255,255,255,0.2)" font-family="system-ui" text-anchor="middle">'+l+'</text>';});
+  svg.innerHTML=defs+lines+'<path d="'+area+'" fill="url(#ag)"/><path d="'+d+'" fill="none" stroke="url(#lg)" stroke-width="2.5" stroke-linecap="round"/>'+dots+tlabels;
+}
+
+function renderFlowChart() {
+  var pts=_buildFlowPoints();
+  _renderFlowSvg('flow-svg',pts);
+  var s=STATES[app.currentState];
+  document.getElementById('flow-subtitle').innerHTML=pts.length+' check-in'+(pts.length!==1?'s':'')+' · last is <span style="color:'+s.color+';text-shadow:0 0 10px '+s.color+'80">'+s.name+'</span>';
+}
+
+// ─── HISTORY SCREEN ──────────────────────────────────────
+function renderHistory() {
+  var checkins = db_getCheckins(activeMemberId);
+  var m = getActiveMember();
+  var titleEl = document.getElementById('history-title');
+  if (titleEl) titleEl.textContent = m.display_name + ' · ' + checkins.length + ' check-in' + (checkins.length!==1?'s':'');
+  var pts = checkins.map(function(c){
+    var val=c.state_after||c.state_before;
+    var idx=STATES.findIndex(function(s){return s.value===val;});
+    if(idx===-1&&c._stateIdx!==undefined)idx=c._stateIdx;
+    return {stateIdx:Math.max(0,idx),ts:new Date(c.created_at).getTime()};
+  });
+  _renderFlowSvg('history-svg', pts);
+  var list = document.getElementById('history-list'); if (!list) return;
+  list.innerHTML = '';
+  var recent = checkins.slice().reverse().slice(0, 8);
+  recent.forEach(function(c) {
+    var beforeVal = c.state_before;
+    var afterVal  = c.state_after;
+    var beforeIdx = STATES.findIndex(function(s){return s.value===beforeVal;});
+    if(beforeIdx===-1&&c._stateIdx!==undefined) beforeIdx=c._stateIdx;
+    var afterIdx  = afterVal ? STATES.findIndex(function(s){return s.value===afterVal;}) : -1;
+    var bs = STATES[Math.max(0,beforeIdx)];
+    var as_ = afterIdx>=0 ? STATES[afterIdx] : null;
+    var ts = new Date(c.created_at);
+    var timeStr = ts.getHours()+':'+(ts.getMinutes()<10?'0':'')+ts.getMinutes();
+    var row = document.createElement('div'); row.className = 'history-row';
+    var statesHtml = '<div class="history-state-chip" style="color:'+bs.color+';border-color:'+bs.color+'40">'+bs.name+'</div>';
+    if(as_) statesHtml += '<div class="history-arrow">→</div><div class="history-state-chip" style="color:'+as_.color+';border-color:'+as_.color+'40">'+as_.name+'</div>';
+    var actTitle = c.activity_id ? (ACTIVITIES.find(function(a){return a.id===c.activity_id;})||{title:c.activity_id}).title : '';
+    row.innerHTML='<div class="history-time">'+timeStr+'</div><div class="history-states">'+statesHtml+'</div>'+(actTitle?'<div class="history-activity">'+actTitle+'</div>':'');
+    list.appendChild(row);
+  });
+  if(!recent.length) list.innerHTML='<div class="hint" style="padding:20px 0">No check-ins yet.</div>';
+}
+
+// ─── INTENTION ───────────────────────────────────────────
 function updateIntentionLabels() {
-  var cs=STATES[app.currentState], is=STATES[app.intentionState];
-  var e1=document.getElementById('intent-from'); if(e1){e1.textContent=cs.name;e1.style.color=cs.color;e1.style.textShadow='0 0 10px '+cs.color+'80';}
-  var e2=document.getElementById('intent-to');   if(e2){e2.textContent=is.name;e2.style.color=is.color;e2.style.textShadow='0 0 10px '+is.color+'80';}
-  var delta=is.value-cs.value, sign=delta>0?'+':'';
-  var dl=document.getElementById('delta-label'), dh=document.getElementById('delta-hint');
+  var cs=STATES[app.currentState],is=STATES[app.intentionState];
+  var e1=document.getElementById('intent-from');if(e1){e1.textContent=cs.name;e1.style.color=cs.color;e1.style.textShadow='0 0 10px '+cs.color+'80';}
+  var e2=document.getElementById('intent-to');if(e2){e2.textContent=is.name;e2.style.color=is.color;e2.style.textShadow='0 0 10px '+is.color+'80';}
+  var delta=is.value-cs.value,sign=delta>0?'+':'';
+  var dl=document.getElementById('delta-label'),dh=document.getElementById('delta-hint');
   if(dl){dl.textContent=sign+delta+' shift';dl.style.color=delta>0?is.color:delta<0?'#c06040':'rgba(255,255,255,0.35)';}
   if(dh){dh.textContent=delta>=100?'A meaningful leap. Pick one small act.':delta>0?'Within reach. The next step is small.':delta<0?'A move downward — sometimes that is honest.':'Stay where you are. That can be the work.';}
 }
 
-// ── ACTIONS ──────────────────────────────────────────
+// ─── ACTIONS ─────────────────────────────────────────────
 function findActions() {
-  var from=STATES[app.currentState].name, to=STATES[app.intentionState].name;
+  var from=STATES[app.currentState].name,to=STATES[app.intentionState].name;
   var acts=ACTIVITIES.map(function(a){return Object.assign({},a,{score:(a.targets.includes(to)?3:0)+(a.leaves.includes(from)?2:0)});}).sort(function(a,b){return b.score-a.score;}).slice(0,4);
   var is=STATES[app.intentionState];
-  var el=document.getElementById('actions-toward'); if(el){el.textContent=is.name;el.style.color=is.color;el.style.textShadow='0 0 10px '+is.color+'80';}
-  var list=document.getElementById('activity-list'); if(!list) return;
+  var el=document.getElementById('actions-toward');if(el){el.textContent=is.name;el.style.color=is.color;el.style.textShadow='0 0 10px '+is.color+'80';}
+  var list=document.getElementById('activity-list');if(!list)return;
   list.innerHTML='';
   acts.forEach(function(a){
-    var card=document.createElement('button'); card.className='activity-card';
+    var card=document.createElement('button');card.className='activity-card';
     card.innerHTML='<div class="act-duration" style="color:'+is.color+'">'+a.duration+'</div><div class="act-title">'+a.title+'</div><div class="act-body">'+a.body+'</div><div class="act-start">Start now →</div>';
     card.onclick=function(){startActivity(a);};
     list.appendChild(card);
@@ -756,112 +938,135 @@ function findActions() {
   showScreen('s-actions');
 }
 
-// ── TIMER ─────────────────────────────────────────────
+// ─── TIMER ───────────────────────────────────────────────
 function startActivity(act) {
-  app.selectedActivity=act; app.timerRemaining=act.durationSecs;
+  app.selectedActivity=act;app.timerRemaining=act.durationSecs;
   var color=STATES[app.intentionState].color;
-  setText('timer-title',act.title); setText('timer-body',act.body); setText('timer-status','IN PROGRESS · '+act.duration);
-  var orb=document.getElementById('timer-orb'); if(orb){orb.style.borderColor=color;orb.style.boxShadow='0 0 16px 4px '+color+'80';}
-  updateAmbient(color); updateTimerDisplay();
-  if(app.timerInterval) clearInterval(app.timerInterval);
+  setText('timer-title',act.title);setText('timer-body',act.body);setText('timer-status','IN PROGRESS · '+act.duration);
+  var orb=document.getElementById('timer-orb');if(orb){orb.style.borderColor=color;orb.style.boxShadow='0 0 16px 4px '+color+'80';}
+  updateAmbient(color);updateTimerDisplay();
+  if(app.timerInterval)clearInterval(app.timerInterval);
   app.timerInterval=setInterval(function(){
-    app.timerRemaining=Math.max(0,app.timerRemaining-1); updateTimerDisplay();
+    app.timerRemaining=Math.max(0,app.timerRemaining-1);updateTimerDisplay();
     if(app.timerRemaining===0){clearInterval(app.timerInterval);if(navigator.vibrate)navigator.vibrate([100,50,100]);}
   },1000);
   showScreen('s-timer');
 }
+function updateTimerDisplay(){setText('timer-clock',String(Math.floor(app.timerRemaining/60)).padStart(2,'0')+':'+String(app.timerRemaining%60).padStart(2,'0'));}
 
-function updateTimerDisplay() {
-  setText('timer-clock', String(Math.floor(app.timerRemaining/60)).padStart(2,'0')+':'+String(app.timerRemaining%60).padStart(2,'0'));
-}
-
-// ── POST CHECK-IN ─────────────────────────────────────
+// ─── POST CHECK-IN ────────────────────────────────────────
 function setupPostCheck() {
-  var cs=STATES[app.currentState], is=STATES[app.intentionState];
-  var bp=document.getElementById('post-before-pill'); if(bp){bp.querySelector('.pill-name').textContent=cs.name;bp.querySelector('.pill-name').style.color=cs.color;}
-  var ip=document.getElementById('post-intent-pill'); if(ip){ip.querySelector('.pill-name').textContent=is.name;ip.querySelector('.pill-name').style.color=is.color;ip.style.borderColor=is.color+'60';}
-  dialState['post']={idx:app.currentState, angle:indexToAngle(app.currentState), velocity:0};
+  var cs=STATES[app.currentState],is=STATES[app.intentionState];
+  var bp=document.getElementById('post-before-pill');if(bp){bp.querySelector('.pill-name').textContent=cs.name;bp.querySelector('.pill-name').style.color=cs.color;}
+  var ip=document.getElementById('post-intent-pill');if(ip){ip.querySelector('.pill-name').textContent=is.name;ip.querySelector('.pill-name').style.color=is.color;ip.style.borderColor=is.color+'60';}
+  dialState['post']={idx:app.currentState,angle:indexToAngle(app.currentState),velocity:0};
 }
+function updatePostDelta(){var delta=STATES[app.postState].value-STATES[app.currentState].value;var el=document.getElementById('post-delta-label');if(el)el.textContent=delta>0?'↑ +'+delta:delta<0?'↓ '+delta:'↔ no change';}
 
-function updatePostDelta() {
-  var delta=STATES[app.postState].value-STATES[app.currentState].value;
-  var el=document.getElementById('post-delta-label');
-  if(el) el.textContent=delta>0?'↑ +'+delta:delta<0?'↓ '+delta:'↔ no change';
-}
-
-// ── SAVE ──────────────────────────────────────────────
+// ─── SAVE (writes to mock DB / localStorage) ─────────────
 function saveCheckin() {
-  if(app.timerInterval) clearInterval(app.timerInterval);
-  var before=STATES[app.currentState], after=STATES[app.postState], delta=after.value-before.value;
-  var lbp=document.getElementById('logged-before-pill'); if(lbp){lbp.querySelector('.pill-name').textContent=before.name;lbp.querySelector('.pill-name').style.color=before.color;}
-  var lap=document.getElementById('logged-after-pill');  if(lap){lap.querySelector('.pill-name').textContent=after.name;lap.querySelector('.pill-name').style.color=after.color;lap.style.borderColor=after.color+'60';lap.style.boxShadow='0 0 12px 2px '+after.color+'40';}
+  if(app.timerInterval)clearInterval(app.timerInterval);
+  var before=STATES[app.currentState],after=STATES[app.postState],delta=after.value-before.value;
+
+  // WRITE TO MOCK DB (same call signature as Supabase in Phase 2)
+  db_saveCheckin(activeMemberId, {
+    state_before: before.value,
+    state_after:  after.value,
+    intention:    STATES[app.intentionState].value,
+    activity_id:  app.selectedActivity ? app.selectedActivity.id : null,
+    created_at:   new Date().toISOString()
+  });
+
+  var lbp=document.getElementById('logged-before-pill');if(lbp){lbp.querySelector('.pill-name').textContent=before.name;lbp.querySelector('.pill-name').style.color=before.color;}
+  var lap=document.getElementById('logged-after-pill');if(lap){lap.querySelector('.pill-name').textContent=after.name;lap.querySelector('.pill-name').style.color=after.color;lap.style.borderColor=after.color+'60';lap.style.boxShadow='0 0 12px 2px '+after.color+'40';}
   setText('logged-via',app.selectedActivity?app.selectedActivity.title:'—');
   setText('logged-headline',delta>0?'You moved upward.':delta<0?'You stayed honest.':'You held your ground.');
-  var n=app.checkins.length+4; setText('logged-sub',"Today's flow has "+n+" check-in"+(n!==1?'s':'')+". Keep noticing — the map gets clearer with use.");
-  app.checkins.push({stateIdx:app.postState, ts:Date.now()});
+  var n=db_getCheckins(activeMemberId).length;
+  setText('logged-sub',"Today's flow has "+n+" check-in"+(n!==1?'s':'')+". Keep noticing — the map gets clearer with use.");
   updateAmbient(after.color);
+  updateMemberBar();
   if(app.isGroupFlow) showScreen('s-group-aggregate');
   else showScreen('s-logged');
 }
 
-// ── COMMUNITY ─────────────────────────────────────────
-var COMMUNITY_DATA=[
-  {stateIdx:14,count:5},{stateIdx:15,count:4},{stateIdx:10,count:3},
-  {stateIdx:9,count:3},{stateIdx:11,count:2},{stateIdx:5,count:2},{stateIdx:6,count:2},
-];
-
-function renderCommunityWheel() {
-  var c=document.getElementById('canvas-community'); if(c) drawAggregateWheel(c,COMMUNITY_DATA);
-  renderDistributionBars('community-bars',COMMUNITY_DATA);
+// ─── COMMUNITY ───────────────────────────────────────────
+function renderCommunity() {
+  var data = db_getCommunityAggregate('comm-001');
+  var c=document.getElementById('canvas-community');if(c)drawAggregateWheel(c,data);
+  renderDistributionBars('community-bars',data);
+  // Stats
+  var total = data.reduce(function(s,d){return s+d.count;},0);
+  setText('stat-members', MOCK_DB.members.length);
+  setText('stat-checkins', total);
+  setText('stat-active', Math.round(100*total/MOCK_DB.members.length)+'%');
+  // Courage threshold
+  var aboveCourage = data.filter(function(d){return STATES[d.stateIdx].value>=200;}).reduce(function(s,d){return s+d.count;},0);
+  var pct = total > 0 ? Math.round(100*aboveCourage/total) : 0;
+  setText('courage-pct', pct+'% above the courage threshold');
 }
+
 function renderGroupAggregate() {
-  var data=COMMUNITY_DATA.concat([{stateIdx:app.postState,count:1}]);
-  var c=document.getElementById('canvas-group'); if(c) drawAggregateWheel(c,data);
+  // Include current active member's latest state
+  var base = db_getCommunityAggregate('comm-001');
+  var data = base.slice();
+  var found = data.findIndex(function(d){return d.stateIdx===app.postState;});
+  if(found>=0) data[found] = {stateIdx:app.postState, count:data[found].count+1};
+  else data.push({stateIdx:app.postState, count:1});
+  var c=document.getElementById('canvas-group');if(c)drawAggregateWheel(c,data);
   renderDistributionBars('group-bars',data);
+  var total=data.reduce(function(s,d){return s+d.count;},0);
+  setText('group-agg-count', total+' member'+(total!==1?'s':'')+' checked in · updating live');
 }
 
-function drawAggregateWheel(canvas, data) {
-  var ctx=canvas.getContext('2d'), W=canvas.width, H=canvas.height, cx=W/2, cy=H/2;
-  var R=110, ri=62, n=STATES.length, sa=2*Math.PI/n, start=-Math.PI/2;
+function drawAggregateWheel(canvas,data){
+  var ctx=canvas.getContext('2d'),W=canvas.width,H=canvas.height,cx=W/2,cy=H/2;
+  var R=110,ri=62,n=STATES.length,sa=2*Math.PI/n,start=-Math.PI/2;
   ctx.clearRect(0,0,W,H);
-  for(var i=0;i<n;i++){
-    var a0=start+i*sa, a1=a0+sa-0.01;
-    ctx.beginPath(); ctx.moveTo(cx+ri*Math.cos(a0),cy+ri*Math.sin(a0));
-    ctx.arc(cx,cy,R,a0,a1); ctx.arc(cx,cy,ri,a1,a0,true); ctx.closePath();
-    ctx.fillStyle=STATES[i].color+'22'; ctx.fill();
-  }
-  var cmap={};
-  data.forEach(function(d){cmap[d.stateIdx]=(cmap[d.stateIdx]||0)+d.count;});
-  var maxC=Math.max.apply(null,Object.values(cmap));
+  for(var i=0;i<n;i++){var a0=start+i*sa,a1=a0+sa-0.01;ctx.beginPath();ctx.moveTo(cx+ri*Math.cos(a0),cy+ri*Math.sin(a0));ctx.arc(cx,cy,R,a0,a1);ctx.arc(cx,cy,ri,a1,a0,true);ctx.closePath();ctx.fillStyle=STATES[i].color+'22';ctx.fill();}
+  var cmap={};data.forEach(function(d){cmap[d.stateIdx]=(cmap[d.stateIdx]||0)+d.count;});
+  var maxC=Math.max.apply(null,Object.values(cmap).concat([1]));
   Object.keys(cmap).forEach(function(k){
-    var idx=parseInt(k), pct=cmap[idx]/maxC;
-    var a0=start+idx*sa, a1=a0+sa-0.01;
-    var inR=ri+(R-ri)*0.1, outR=ri+(R-ri)*(0.2+pct*0.8);
-    ctx.beginPath(); ctx.moveTo(cx+inR*Math.cos(a0),cy+inR*Math.sin(a0));
-    ctx.arc(cx,cy,outR,a0,a1); ctx.arc(cx,cy,inR,a1,a0,true); ctx.closePath();
+    var idx=parseInt(k),pct=cmap[idx]/maxC;
+    var a0=start+idx*sa,a1=a0+sa-0.01,inR=ri+(R-ri)*0.1,outR=ri+(R-ri)*(0.2+pct*0.8);
+    ctx.beginPath();ctx.moveTo(cx+inR*Math.cos(a0),cy+inR*Math.sin(a0));ctx.arc(cx,cy,outR,a0,a1);ctx.arc(cx,cy,inR,a1,a0,true);ctx.closePath();
     var alpha=Math.round(pct*200+55).toString(16).padStart(2,'0');
-    ctx.fillStyle=STATES[idx].color+alpha;
-    ctx.shadowColor=STATES[idx].color; ctx.shadowBlur=10*pct; ctx.fill(); ctx.shadowBlur=0;
+    ctx.fillStyle=STATES[idx].color+alpha;ctx.shadowColor=STATES[idx].color;ctx.shadowBlur=10*pct;ctx.fill();ctx.shadowBlur=0;
   });
 }
 
-function renderDistributionBars(id, data) {
-  var container=document.getElementById(id); if(!container) return;
-  var cmap={};
-  data.forEach(function(d){cmap[d.stateIdx]=(cmap[d.stateIdx]||0)+d.count;});
+function renderDistributionBars(id,data){
+  var container=document.getElementById(id);if(!container)return;
+  var cmap={};data.forEach(function(d){cmap[d.stateIdx]=(cmap[d.stateIdx]||0)+d.count;});
   var total=data.reduce(function(s,d){return s+d.count;},0);
+  if(!total){container.innerHTML='';return;}
   var sorted=Object.keys(cmap).map(function(k){return{idx:parseInt(k),count:cmap[k]};}).sort(function(a,b){return b.count-a.count;}).slice(0,6);
   container.innerHTML='';
   sorted.forEach(function(item){
-    var s=STATES[item.idx], pct=Math.round(100*item.count/total);
-    var row=document.createElement('div'); row.className='community-bar-row';
+    var s=STATES[item.idx],pct=Math.round(100*item.count/total);
+    var row=document.createElement('div');row.className='community-bar-row';
     row.innerHTML='<div class="bar-label" style="color:'+s.color+'">'+s.name+'</div><div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+s.color+'"></div></div><div class="bar-count">'+item.count+'</div>';
     container.appendChild(row);
   });
 }
 
-// ── BOOT ──────────────────────────────────────────────
+// ─── DB INFO BADGE ────────────────────────────────────────
+var dbInfoOpen = false;
+function toggleDbInfo() {
+  dbInfoOpen = !dbInfoOpen;
+  var el = document.getElementById('db-label');
+  if(dbInfoOpen){
+    var total = 0;
+    MOCK_DB.members.forEach(function(m){ total += db_getCheckins(m.id).filter(function(c){return !c.id||c.id.startsWith('ci-');}).length; });
+    el.textContent = total + ' real check-in' + (total!==1?'s':'') + ' stored';
+  } else {
+    el.textContent = 'mock db';
+  }
+}
+
+// ─── BOOT ────────────────────────────────────────────────
 updateAmbient(STATES[9].color);
+updateMemberBar();
+refreshHome();
 </script>
 </body>
 </html>
